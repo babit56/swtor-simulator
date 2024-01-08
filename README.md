@@ -1,5 +1,15 @@
 # SWTOR Simulator
 
+Potential folder structure
+``` bash
+parsed
+  nodes
+  objs
+    apc
+    dis
+    abl
+```
+
 ## Assumptions and other choices
 - Alacrity works perfectly (>2054 makes all gcds 1.4)
 - Damage ranges are sampled uniformly
@@ -9,6 +19,9 @@
 ## TODO
 ### Soon
 - [ ] Ability effects
+- [ ] Talents
+- [ ] Buffs
+- [ ] Scenes for saving abilities
 - [ ] Figure out how ability usage will be done. Using event system sounds nice.
   - [ ] Cooldowns
   - [ ] Ordering (double ticks needed)
@@ -23,3 +36,12 @@
   - [ ] Prio fillers
   - [ ] Priority
   - [ ] Static
+  
+### Done
+- [x] Ability itself
+
+## Building and running
+
+```bash
+cargo run
+```

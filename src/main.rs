@@ -1,6 +1,10 @@
 mod utils;
 mod ecs_system;
+mod parse;
 
+use std::str::FromStr;
+
+use ecs_system::{get_abilities, TreeChoices, TreeChoice, CombatStyle};
 use utils::constants::*;
 use bevy::prelude::*;
 
@@ -87,8 +91,25 @@ fn main() {
         gear_power: 940.0,
     };
 
-    simple_dmg_calc(dumb_saber);
+    // simple_dmg_calc(dumb_saber);
 
-    App::new()
-        .run();
+    // App::new()
+    //     .run();
+
+    let choices = TreeChoices {
+        combat_style: CombatStyle::from_str("darkness").unwrap(),
+        choices: [
+            TreeChoice::Right,
+            TreeChoice::Left,
+            TreeChoice::Right,
+            TreeChoice::Right,
+            TreeChoice::Middle,
+            TreeChoice::Left,
+            TreeChoice::Left,
+            TreeChoice::Middle,
+        ]
+    };
+    get_abilities(choices);
+    // ecs_system::read_dis();
+    // parse::test();
 }

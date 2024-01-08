@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub mod constants {
     pub static LEVEL: f64 = 80.0;
     pub static BASE_LEVEL_DMG: f64 = 19335.0;
