@@ -1,6 +1,9 @@
 mod utils;
 mod ecs_system;
 mod parse;
+#[allow(non_camel_case_types)]
+mod types;
+
 
 use std::str::FromStr;
 
@@ -8,6 +11,7 @@ use ecs_system::{get_abilities, TreeChoices, TreeChoice, CombatStyle};
 use utils::constants::*;
 use bevy::prelude::*;
 
+#[allow(dead_code)]
 struct Gear {
     weapon_min: f64,
     weapon_max: f64,
@@ -16,6 +20,7 @@ struct Gear {
     gear_power: f64,
 }
 
+#[allow(dead_code)]
 impl Gear {
     fn get_mastery(&self) -> f64 {
         let mastery = BASE_MASTERY + DATACRON_MASTERY + self.gear_mastery;
@@ -60,6 +65,7 @@ impl Gear {
     }
 }
 
+#[allow(dead_code)]
 fn simple_dmg_calc(gear: Gear) {
     let (tooltip_min, tooltip_max) = gear.tooltip_dmg();
     println!("Tooltip min: {}", tooltip_min);
@@ -75,8 +81,29 @@ fn simple_dmg_calc(gear: Gear) {
     println!("Crit max: {}", crit_max);
 }
 
+fn add_shit_system(world: &mut World) {
+    world.spawn((
+        types::ablAbilityType::ablAbilityTypeDiscipline,
+        types::staCombatModeType::staCombatModeMelee,
+        ecs_system::Cooldown(10.0)
+    ));
+}
+
+// fn test_scene_system(world: &mut World) {
+fn test_scene_system(mut commands: Commands, q: Query<Entity, (With<ecs_system::Cooldown>, Added<ecs_system::Cooldown>)>) {
+    for entity in &q {
+        info!("Entity: {}", entity.index());
+        commands.add(move |world: &mut World| {
+            let scene = DynamicSceneBuilder::from_world(&world).extract_entity(entity).build();
+            let type_registry = world.resource::<AppTypeRegistry>();
+            let serialized_abilities = scene.serialize_ron(type_registry).unwrap();
+            info!("{}", serialized_abilities);
+        });
+    }
+}
+
 fn main() {
-    let dumb_saber = Gear {
+    let _dumb_saber = Gear {
         weapon_min: 46.0,
         weapon_max: 69.0,
         gear_crit: 5.0,
@@ -93,23 +120,29 @@ fn main() {
 
     // simple_dmg_calc(dumb_saber);
 
-    // App::new()
-    //     .run();
+    let mut app = App::new();
+    include!(concat!(env!("OUT_DIR"), "/type_registration.rs"));
+    app
+        .add_plugins(MinimalPlugins.build().add(bevy::log::LogPlugin::default()))
+        // .add_systems(Startup, (add_shit_system, test_scene_system))
+        .add_systems(Startup, add_shit_system)
+        .add_systems(Update, test_scene_system)
+        .run();
 
-    let choices = TreeChoices {
-        combat_style: CombatStyle::from_str("darkness").unwrap(),
-        choices: [
-            TreeChoice::Right,
-            TreeChoice::Left,
-            TreeChoice::Right,
-            TreeChoice::Right,
-            TreeChoice::Middle,
-            TreeChoice::Left,
-            TreeChoice::Left,
-            TreeChoice::Middle,
-        ]
-    };
-    get_abilities(choices);
+    // let choices = TreeChoices {
+    //     combat_style: CombatStyle::from_str("darkness").unwrap(),
+    //     choices: [
+    //         TreeChoice::Right,
+    //         TreeChoice::Left,
+    //         TreeChoice::Right,
+    //         TreeChoice::Right,
+    //         TreeChoice::Middle,
+    //         TreeChoice::Left,
+    //         TreeChoice::Left,
+    //         TreeChoice::Middle,
+    //     ]
+    // };
+    // get_abilities(choices);
     // ecs_system::read_dis();
     // parse::test();
 }

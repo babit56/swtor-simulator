@@ -93,8 +93,8 @@ enum AttackType {
 }
 
 // Change to duration
-#[derive(Component)]
-struct Cooldown(f64);
+#[derive(Debug, Component, Reflect)]
+pub struct Cooldown(pub f64);
 
 // Might need multiple, at least for % based and integer based resources
 // Make into meaningful unit?
